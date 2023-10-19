@@ -11,15 +11,18 @@ public class MoveLoser : MonoBehaviour
 
     public int jumpSpeed = 15;
     public float gravity = .5f;
-    [SerializeField] private float termanalVelocity = 20;
+    [SerializeField] private float terminalVelocity = 20;
     private bool moving = false;
 
     [SerializeField] private bool wallJump = true;
+    private bool onWall = false;
 
     [SerializeField]private bool jumpingTriggered = false;
 
     [SerializeField] private float jumpPressTime = .2f;
     [SerializeField] private Transform point;
+    [SerializeField] private Transform right;
+    [SerializeField] private Transform left;
     [SerializeField] private bool grounded = false;
     [SerializeField] private float footCircleSize = .3f;
     [SerializeField]private LayerMask groundLayer;
@@ -28,6 +31,8 @@ public class MoveLoser : MonoBehaviour
     [SerializeField] private float accleration = 10f;
     [SerializeField] private float cyoTime = .2f;
     private bool gravityBool = false;
+    [SerializeField] private ParticleSystem RightWallParticleSystem;
+    [SerializeField] private ParticleSystem LeftWallParticleSystem;
 
     private IEnumerator holdJumpThing;
 
@@ -35,7 +40,7 @@ public class MoveLoser : MonoBehaviour
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
-        holdJumpThing = holdJump();
+        holdJumpThing = HoldJump();
     }
 
     // Update is called once per frame
@@ -54,18 +59,44 @@ public class MoveLoser : MonoBehaviour
         }
         if(rb.velocity.x == 0 && vel.x == 0){
             tempVelX = 0;
-            Debug.Log("hit wall");
         }
-        if(vel.y < termanalVelocity){
-            vel = new Vector2(vel.x, termanalVelocity); 
-        }
-        rb.velocity = new Vector2(tempVelX*speed,vel.y);
-        
-        if(gravityBool == true){
-            vel = new Vector2(vel.x, vel.y - gravity);
+        if(!onWall){
+            if(vel.y < terminalVelocity){
+                vel = new Vector2(vel.x, terminalVelocity); 
+            }
+            rb.velocity = new Vector2(tempVelX*speed,vel.y);
+            if(!RightWallParticleSystem.isStopped){
+                RightWallParticleSystem.Stop();
+                //RightWallParticleSystem.Clear();
+            }
+            if(!LeftWallParticleSystem.isStopped){
+                LeftWallParticleSystem.Stop();
+                //LeftWallParticleSystem.Clear();
+            }
+            
         } else {
-            vel = new Vector2(vel.x,0);
+            if(vel.y < terminalVelocity/10){
+                vel = new Vector2(vel.x, terminalVelocity/10); 
+            }
+            rb.velocity = new Vector2(tempVelX*speed,vel.y);
+            if(Physics2D.Raycast(right.position, new Vector2(1,0),footCircleSize, groundLayer) && vel.x == -1){
+                Debug.Log("dkjlfhasjkdhfk");
+                if(!LeftWallParticleSystem.isPlaying){
+                    LeftWallParticleSystem.Play();
+                }
+            }
+            if(Physics2D.Raycast(left.position, new Vector2(-1,0),footCircleSize, groundLayer) && vel.x == 1){
+                if(!RightWallParticleSystem.isPlaying){
+                    RightWallParticleSystem.Play();
+                }
+                
+            }
         }
+        if(gravityBool == true){
+                vel = new Vector2(vel.x, vel.y - gravity);
+            } else {
+                vel = new Vector2(vel.x,0);
+            }
 
         if(!moving){
             vel = new Vector2(0,vel.y);
@@ -77,12 +108,17 @@ public class MoveLoser : MonoBehaviour
                 grounded = true;
                 gravityBool = false;
             } else {
-                StartCoroutine(cyotyTime(cyoTime));
+                StartCoroutine(CoyoteTime(cyoTime));
                 gravityBool = true;
             }
         }
         if(wallJump){
             //Check if wall is next to me then fall slower next to wall
+            if(Physics2D.Raycast(right.position, new Vector2(1,0),footCircleSize, groundLayer) && vel.x == -1 || Physics2D.Raycast(left.position, new Vector2(-1,0),footCircleSize, groundLayer) && vel.x == 1){
+                onWall = true;
+            } else {
+                onWall = false;
+            }
         }
         
         if(jumpingTriggered && grounded){
@@ -92,10 +128,18 @@ public class MoveLoser : MonoBehaviour
             gravityBool = true;
             jumpingTriggered = false;
             
+        } else if(jumpingTriggered && onWall){
+             if(vel.x == 1){
+                vel = new Vector2(vel.x, jumpSpeed);
+                tempVelX = -speed/3;
+            } else if(vel.x == -1){
+                vel = new Vector2(vel.x, jumpSpeed);
+                tempVelX = speed/3;
+            }
         }
     }
     
-    public void walk(InputAction.CallbackContext context){
+    public void Walk(InputAction.CallbackContext context){
         if(context.action.triggered){
             vel = new Vector2(context.ReadValue<Vector2>().x,vel.y);
             moving = true;
@@ -106,7 +150,7 @@ public class MoveLoser : MonoBehaviour
         }
         
     }
-    public void jump(InputAction.CallbackContext context){
+    public void Jump(InputAction.CallbackContext context){
         
         if(context.action.triggered && grounded){
             vel = new Vector2(vel.x, jumpSpeed);
@@ -114,25 +158,36 @@ public class MoveLoser : MonoBehaviour
             gravityBool = true;
             
             
+        } else if(context.action.triggered && onWall){
+            if(vel.x == 1){
+                vel = new Vector2(vel.x, jumpSpeed);
+                tempVelX = -speed/3;
+            } else if(vel.x == -1){
+                vel = new Vector2(vel.x, jumpSpeed);
+                tempVelX = speed/3;
+            }
         } else if(context.action.triggered) {
             jumpingTriggered = true;
-            StartCoroutine(holdJump());
+            StartCoroutine(HoldJump());
         }
         
     }
     private void OnCollisionEnter2D(Collision2D other) {
         
     }
-    private void OnDrawGizmos() {
-        Gizmos.DrawWireSphere(point.position,footCircleSize);
-    }
-    private IEnumerator cyotyTime(float time){
+    
+    private IEnumerator CoyoteTime(float time){
         yield return new WaitForSeconds(time);
         grounded = false;
     }
-    private IEnumerator holdJump(){
+    private IEnumerator HoldJump(){
         yield return new WaitForSeconds(jumpPressTime);
         jumpingTriggered = false;
         Debug.Log("Jump time stoped");
+    }
+    
+    private void OnDrawGizmos() {
+        Gizmos.DrawWireSphere(point.position,footCircleSize);
+        Gizmos.DrawRay(right.position, new Vector2(1,0));
     }
 }
