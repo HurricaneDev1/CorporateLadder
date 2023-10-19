@@ -55,7 +55,6 @@ public class MoveLoser : MonoBehaviour
         }
         if(rb.velocity.y == 0 && vel.y < jumpSpeed -1 && vel.y > 0){
             vel = new Vector2(vel.x, 0);
-            Debug.Log("hit roof");
         }
         if(rb.velocity.x == 0 && vel.x == 0){
             tempVelX = 0;
@@ -80,7 +79,6 @@ public class MoveLoser : MonoBehaviour
             }
             rb.velocity = new Vector2(tempVelX*speed,vel.y);
             if(Physics2D.Raycast(right.position, new Vector2(1,0),footCircleSize, groundLayer) && vel.x == -1){
-                Debug.Log("dkjlfhasjkdhfk");
                 if(!LeftWallParticleSystem.isPlaying){
                     LeftWallParticleSystem.Play();
                 }

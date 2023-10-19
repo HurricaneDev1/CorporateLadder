@@ -10258,7 +10258,7 @@ MonoBehaviour:
   jumpSpeed: 15
   gravity: 0.48
   terminalVelocity: -20
-  wallJump: 1
+  wallJump: 0
   jumpingTriggered: 0
   jumpPressTime: 0.2
   point: {fileID: 2113389678}
