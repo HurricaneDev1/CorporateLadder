@@ -808,11 +808,13 @@ MonoBehaviour:
   speed: 7
   jumpSpeed: 15
   gravity: 0.48
-  termanalVelocity: -20
+  terminalVelocity: 20
   wallJump: 1
   jumpingTriggered: 0
   jumpPressTime: 0.2
   point: {fileID: 1329150974}
+  right: {fileID: 0}
+  left: {fileID: 0}
   grounded: 1
   footCircleSize: 0.3
   groundLayer:
@@ -821,6 +823,8 @@ MonoBehaviour:
   drag: 1.25
   accleration: 5
   cyoTime: 0.2
+  RightWallParticleSystem: {fileID: 0}
+  LeftWallParticleSystem: {fileID: 0}
 --- !u!61 &423685018
 BoxCollider2D:
   m_ObjectHideFlags: 0
