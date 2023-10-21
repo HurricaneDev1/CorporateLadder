@@ -4,11 +4,12 @@ using UnityEngine;
 
 public class SoundObject : MonoBehaviour
 {
-    [SerializeField]private float soundRadius;
-    [SerializeField]private Transform soundCircleObject;
-    [SerializeField]private float timeForAnimation;
+    [SerializeField]private float soundRadius = 2;
+    private Transform soundCircleObject;
+    [SerializeField]private float timeForAnimation = 0.1f;
     private bool animGoing;
-    void Start(){
+    [SerializeField]private bool soundEmitter;
+    protected void Start(){
         soundCircleObject = Instantiate(Resources.Load<GameObject>("SoundCircle"), transform.position, Quaternion.identity).transform;
         soundCircleObject.SetParent(transform);
     }
@@ -17,24 +18,28 @@ public class SoundObject : MonoBehaviour
     }
     //The MakeSound function you're going to be using most of the time. Tells every soundobject in the radius that this thing made a sound
     public void MakeSound(){
-        animGoing = true;
-        foreach(Collider2D col in Physics2D.OverlapCircleAll(transform.position, soundRadius)){
-            if(col.GetComponent<SoundObject>()){
-                col.GetComponent<SoundObject>().HeardSound();
+        if(soundEmitter){
+            animGoing = true;
+            foreach(Collider2D col in Physics2D.OverlapCircleAll(transform.position, soundRadius)){
+                if(col.GetComponent<SoundObject>()){
+                    col.GetComponent<SoundObject>().HeardSound(transform.position);
+                }
+                //Also make an actual sound
             }
-            //Also make an actual sound
         }
     }
     //Same as other MakeSound but has the option to make more sound
     public void MakeSound(int amplitude){
-        animGoing = true;
-        foreach(Collider2D col in Physics2D.OverlapCircleAll(transform.position, soundRadius * amplitude)){
-            if(col.GetComponent<SoundObject>()){
-                col.GetComponent<SoundObject>().HeardSound();
+        if(soundEmitter){
+            animGoing = true;
+            foreach(Collider2D col in Physics2D.OverlapCircleAll(transform.position, soundRadius * amplitude)){
+                if(col.GetComponent<SoundObject>()){
+                    col.GetComponent<SoundObject>().HeardSound(transform.position);
+                }
             }
         }
     }
-
+    //Does a little animation to show how far your sound reachs
     void SoundCircleAnim(){
         Vector2 soundPos = soundCircleObject.localScale;
         if(animGoing){
@@ -46,7 +51,7 @@ public class SoundObject : MonoBehaviour
             }
         }
     }
-
+    //Gets rid of the sound circle
     IEnumerator CircleGoAway(){
         yield return new WaitForSeconds(0.15f);
         soundCircleObject.localScale = new Vector2(0,0);
@@ -54,7 +59,8 @@ public class SoundObject : MonoBehaviour
             //     soundCircleObject.localScale = new Vector2(soundPos.x - (((soundRadius*2))/ timeForAnimation) * Time.deltaTime, soundPos.y - (((soundRadius*2))/ timeForAnimation) * Time.deltaTime);
             // }
     }
-    public void HeardSound(){
+    //Tells an object that it heard a sound. Meant to be changed in child scripts
+    public virtual void HeardSound(Vector2 posOfSound){
 
     }
     void OnDrawGizmos(){
