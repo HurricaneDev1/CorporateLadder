@@ -33,6 +33,8 @@ public class MoveLoser : MonoBehaviour
     private bool gravityBool = false;
     [SerializeField] private ParticleSystem RightWallParticleSystem;
     [SerializeField] private ParticleSystem LeftWallParticleSystem;
+    [SerializeField] private GameObject projectile; 
+    [SerializeField] private Transform throwPosition; 
 
     private IEnumerator holdJumpThing;
 
@@ -145,6 +147,15 @@ public class MoveLoser : MonoBehaviour
             //stop move
             
             moving = false;
+        }
+        
+    }
+    public void Throw(InputAction.CallbackContext context){
+        if(context.action.triggered){
+            GameObject clone = Instantiate(projectile, throwPosition);
+            
+            clone.GetComponent<Rigidbody2D>().velocity = new Vector2(10,20);
+            Debug.Log(clone.GetComponent<Rigidbody2D>().velocity);
         }
         
     }

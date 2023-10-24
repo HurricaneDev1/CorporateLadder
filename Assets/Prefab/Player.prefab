@@ -1,5 +1,36 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &406420551404819356
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4230918093511065506}
+  m_Layer: 0
+  m_Name: projectilePos
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4230918093511065506
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 406420551404819356}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -0.043421686, y: 0.67004025, z: 20.810654}
+  m_LocalScale: {x: 1.25, y: 1.25, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 7792391037921667917}
+  m_RootOrder: 5
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &7792391036306627905
 GameObject:
   m_ObjectHideFlags: 0
@@ -9715,7 +9746,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7792391037921667953}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -1.4752626, y: -0.42803222, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0.8, y: 0.8, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -9724,6 +9755,7 @@ Transform:
   - {fileID: 7792391038000422425}
   - {fileID: 7792391037112117357}
   - {fileID: 7792391037779517198}
+  - {fileID: 4230918093511065506}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -9859,6 +9891,8 @@ MonoBehaviour:
   cyoTime: 0.2
   RightWallParticleSystem: {fileID: 7792391037112117355}
   LeftWallParticleSystem: {fileID: 7792391037779517196}
+  projectile: {fileID: 3628684419152604557, guid: c2633f692030e8d4ab8e27ce84a5f7b8, type: 3}
+  throwPosition: {fileID: 4230918093511065506}
 --- !u!114 &7792391037921667916
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9901,7 +9935,19 @@ MonoBehaviour:
     m_ActionId: 64546a4b-70ef-4d6a-8733-70b691638187
     m_ActionName: Player/Jump[/Keyboard/space]
   - m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 7792391037921667915}
+        m_TargetAssemblyTypeName: MoveLoser, Assembly-CSharp
+        m_MethodName: Throw
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
     m_ActionId: 7e9df849-ba27-41bd-bf80-b339acc56f54
     m_ActionName: Player/Throw[/Mouse/leftButton]
   - m_PersistentCalls:

@@ -30,8 +30,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3628684419152604557}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.6505922, y: -0.7266305, z: 20.810654}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 20.810654}
+  m_LocalScale: {x: 0.3, y: 0.3, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -101,7 +101,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f023ed21cadf5074e866d3e573682f16, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gravity: 0.48
+  gravity: 0.12
   terminalVelocity: -20
   mass: 1
 --- !u!50 &-7060110549188853355
@@ -163,6 +163,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ad037acf9df4f4445b1274e5d6214c22, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Smash: {fileID: 6756345414045690414, guid: 6788c5f11c23a1e4999df6a18a164194, type: 3}
 --- !u!114 &-3327380647689999520
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -176,5 +177,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   soundRadius: 5
-  soundCircleObject: {fileID: 5423209749086110758, guid: d9315d69f7a94754baa54f07598efecf, type: 3}
   timeForAnimation: 0.3
+  soundEmitter: 0
