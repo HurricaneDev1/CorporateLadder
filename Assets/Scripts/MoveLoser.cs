@@ -154,7 +154,7 @@ public class MoveLoser : MonoBehaviour
         if(context.action.triggered){
             GameObject clone = Instantiate(projectile, throwPosition);
             
-            clone.GetComponent<Rigidbody2D>().velocity = new Vector2(10,20);
+            clone.GetComponent<Rigidbody2D>().velocity = new Vector2(20,30);
             Debug.Log(clone.GetComponent<Rigidbody2D>().velocity);
         }
         
