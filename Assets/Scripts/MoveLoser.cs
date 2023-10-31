@@ -28,6 +28,8 @@ public class MoveLoser : MonoBehaviour
     [SerializeField] private float footCircleSize = .3f;
     [SerializeField]private LayerMask groundLayer;
     private float tempVelX = 0f;
+
+    private bool funVar;
     [SerializeField] private float drag = 1.05f;
     [SerializeField] private float accleration = 10f;
     [SerializeField] private float cyoTime = .2f;
@@ -156,14 +158,14 @@ public class MoveLoser : MonoBehaviour
         }
         
         if(jumpingTriggered && grounded){
-         
+        
             vel = new Vector2(vel.x, jumpSpeed);
             grounded = false;
             gravityBool = true;
             jumpingTriggered = false;
             
         } else if(jumpingTriggered && onWall){
-             if(vel.x == 1){
+            if(vel.x == 1){
                 vel = new Vector2(vel.x, jumpSpeed);
                 tempVelX = -speed/3;
             } else if(vel.x == -1){
@@ -215,6 +217,10 @@ public class MoveLoser : MonoBehaviour
             vel = new Vector2(vel.x, jumpSpeed);
             grounded = false;
             gravityBool = true;
+            if (funVar)
+            {
+                Debug.Log("oh no");
+            }
             
             
         } else if(context.action.triggered && onWall){
