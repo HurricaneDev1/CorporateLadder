@@ -6,6 +6,7 @@ using UnityEngine.InputSystem;
 public class MoveLoser : MonoBehaviour
 {
     [SerializeField] private Vector2 vel = new Vector2(0,0);
+    [SerializeField] private SpriteRenderer sr;
     private Rigidbody2D rb;
     public int speed = 5;
 
@@ -35,6 +36,12 @@ public class MoveLoser : MonoBehaviour
     [SerializeField] private ParticleSystem LeftWallParticleSystem;
     [SerializeField] private GameObject projectile; 
     [SerializeField] private Transform throwPosition; 
+    [SerializeField] private int throwX;
+    [SerializeField] private int throwY;
+    private List<Vector3> whereGo = new List<Vector3>();
+    private int negOrPosForArcChange = 1;
+    private bool throwing = false;
+    [SerializeField]private int arcDistortion = 0;
 
     private IEnumerator holdJumpThing;
 
@@ -43,11 +50,38 @@ public class MoveLoser : MonoBehaviour
     {
         rb = GetComponent<Rigidbody2D>();
         holdJumpThing = HoldJump();
+        sr = GetComponent<SpriteRenderer>();
     }
 
     // Update is called once per frame
     void FixedUpdate()
     {
+        whereGo.Clear();
+        //Create estimated path for cup
+        Vector3 tempVec = new Vector3(throwPosition.position.x,throwPosition.position.y,0);
+        whereGo.Add(tempVec);
+        float yVel = throwY-projectile.GetComponent<Gravity>().gravity;
+        for(int i = 0; i < 50; i++){
+            if(sr.flipX){
+                whereGo.Add(new Vector3(whereGo[i].x + (arcDistortion + throwX)/50f, whereGo[i].y + yVel/50,0));
+                yVel -= projectile.GetComponent<Gravity>().gravity * projectile.GetComponent<Gravity>().mass;
+            } else {
+                whereGo.Add(new Vector3(whereGo[i].x + arcDistortion/50f + -throwX/50f, whereGo[i].y + yVel/50,0));
+                yVel -= projectile.GetComponent<Gravity>().gravity * projectile.GetComponent<Gravity>().mass;
+            }
+        }
+        
+        if(throwing){
+            WhileThrowing();
+            GetComponent<LineRenderer>().positionCount = 50;
+            Vector3[] myArray = whereGo.ToArray();
+            GetComponent<LineRenderer>().SetPositions(myArray);
+        } else {
+            GetComponent<LineRenderer>().positionCount = 0;
+        }
+
+
+
         if(Mathf.Abs(tempVelX) < 1 || Mathf.Abs(tempVelX)/tempVelX != Mathf.Abs(vel.x)/vel.x){
             tempVelX += vel.x/accleration;
         }
@@ -148,14 +182,30 @@ public class MoveLoser : MonoBehaviour
             
             moving = false;
         }
+        if(context.ReadValue<Vector2>().x > 0){
+            sr.flipX = true;
+        } else if(context.ReadValue<Vector2>().x < 0) {
+            sr.flipX = false;
+        }
         
     }
     public void Throw(InputAction.CallbackContext context){
+        
         if(context.action.triggered){
-            GameObject clone = Instantiate(projectile, throwPosition);
+            throwing = true;
             
-            clone.GetComponent<Rigidbody2D>().velocity = new Vector2(20,30);
-            Debug.Log(clone.GetComponent<Rigidbody2D>().velocity);
+            
+            
+            
+            
+        } else if(!context.ReadValue<bool>()){
+            throwing = false;
+            GameObject clone = Instantiate(projectile, throwPosition);
+            if(sr.flipX){
+                clone.GetComponent<Rigidbody2D>().velocity = new Vector2(throwX + arcDistortion,throwY);
+            } else {
+                clone.GetComponent<Rigidbody2D>().velocity = new Vector2(-throwX + arcDistortion,throwY);
+            }
         }
         
     }
@@ -181,22 +231,36 @@ public class MoveLoser : MonoBehaviour
         }
         
     }
-    private void OnCollisionEnter2D(Collision2D other) {
-        
-    }
+
     
     private IEnumerator CoyoteTime(float time){
         yield return new WaitForSeconds(time);
         grounded = false;
     }
     private IEnumerator HoldJump(){
+
         yield return new WaitForSeconds(jumpPressTime);
         jumpingTriggered = false;
         Debug.Log("Jump time stoped");
+    }
+    private void WhileThrowing(){
+        arcDistortion += 1 * negOrPosForArcChange;
+        if(arcDistortion > 10){
+            negOrPosForArcChange *= -1;
+        } else if( arcDistortion < -10){
+            negOrPosForArcChange *= -1;
+        }
     }
     
     private void OnDrawGizmos() {
         Gizmos.DrawWireSphere(point.position,footCircleSize);
         Gizmos.DrawRay(right.position, new Vector2(1,0));
+
+        Vector2 tempVec = new Vector2(throwPosition.position.x,throwPosition.position.y);
+
+        foreach(Vector3 i in whereGo){
+            Gizmos.DrawLine(tempVec, i);
+            tempVec = i;
+        }
     }
 }

@@ -5,13 +5,13 @@ using UnityEngine;
 public class Gravity : MonoBehaviour
 {
     private Rigidbody2D rb;
-    [SerializeField]private float gravity = 1;
+    public float gravity = 1;
     [SerializeField]private float terminalVelocity = -10;
-    [SerializeField]private int mass = 1;
+    public int mass = 1;
     void Start(){
         rb = GetComponent<Rigidbody2D>();
     }
-    void Update()
+    void FixedUpdate()
     {
         if(rb.velocity.y < terminalVelocity){
             rb.velocity = new Vector2(rb.velocity.x, terminalVelocity);

@@ -101,8 +101,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f023ed21cadf5074e866d3e573682f16, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gravity: 0.12
-  terminalVelocity: -20
+  gravity: 3
+  terminalVelocity: -20000
   mass: 1
 --- !u!50 &-7060110549188853355
 Rigidbody2D:
