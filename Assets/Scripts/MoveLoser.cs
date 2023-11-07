@@ -111,7 +111,7 @@ public class MoveLoser : MonoBehaviour
                 //LeftWallParticleSystem.Clear();
             }
             
-        } else {
+        } else if(!grounded) {
             if(vel.y < terminalVelocity/10){
                 vel = new Vector2(vel.x, terminalVelocity/10); 
             }
@@ -126,6 +126,15 @@ public class MoveLoser : MonoBehaviour
                     RightWallParticleSystem.Play();
                 }
                 
+            }
+        } else {
+            if(!RightWallParticleSystem.isStopped){
+                RightWallParticleSystem.Stop();
+                //RightWallParticleSystem.Clear();
+            }
+            if(!LeftWallParticleSystem.isStopped){
+                LeftWallParticleSystem.Stop();
+                //LeftWallParticleSystem.Clear();
             }
         }
         if(gravityBool == true){
