@@ -209,7 +209,7 @@ public class MoveLoser : MonoBehaviour
             
             
             
-        } else if(!context.ReadValue<bool>()){
+        } else if(!context.action.ReadValue<bool>()){
             throwing = false;
             GameObject clone = Instantiate(projectile, throwPosition);
             if(sr.flipX){
@@ -265,6 +265,10 @@ public class MoveLoser : MonoBehaviour
         } else if( arcDistortion < -10){
             negOrPosForArcChange *= -1;
         }
+    }
+
+    public void Die(){
+        Debug.Log("Loser hahahhahahahahah");
     }
     
     private void OnDrawGizmos() {

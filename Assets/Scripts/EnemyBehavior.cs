@@ -10,11 +10,22 @@ public class EnemyBehavior : SoundObject
     [SerializeField]private int moveSpeed;
     private Rigidbody2D rb;
     private Vector2 directionOfSound;
+    private Transform player;
+    [SerializeField]private float attentionSpan;
+    private float attentionTracker;
     protected new void Start(){
         base.Start();
         rb = GetComponent<Rigidbody2D>();
+        player = FindObjectOfType<MoveLoser>().transform;
+        attentionTracker = Mathf.Infinity;
     }
     void Update(){
+        attentionTracker -= Time.deltaTime;
+        if(attentionTracker <= 0 && state == EnemyState.Curious){
+            state = EnemyState.Idle;
+            questionMark.SetActive(false);
+            attentionTracker = Mathf.Infinity;
+        }
         switch(state){
             //Randomly moves the enemy, and changes its direction randomly. Should change later
             case EnemyState.Idle:
@@ -28,6 +39,14 @@ public class EnemyBehavior : SoundObject
                 if(moveDirection != directionOfSound.x/Mathf.Abs(directionOfSound.x))ChangeDirection();
                 rb.velocity = new Vector2(moveDirection * moveSpeed, rb.velocity.y);
                 break;
+            case EnemyState.Alert:
+                Vector2 PlayerDirection = player.transform.position - transform.position;
+                if(moveDirection != PlayerDirection.x/Mathf.Abs(PlayerDirection.x))ChangeDirection();
+                rb.velocity = new Vector2(moveDirection * moveSpeed * 5, rb.velocity.y);
+                if(Vector3.Distance(transform.position, player.position) < 0.5f){
+                    player.GetComponent<MoveLoser>().Die();
+                }
+                break;
         }
     }
     //If the enemy hears a sound it will change their state
@@ -36,12 +55,13 @@ public class EnemyBehavior : SoundObject
         switch(state){
             case EnemyState.Idle:
                 state = EnemyState.Curious;
+                attentionTracker = attentionSpan;
                 questionMark.SetActive(true);
                 break;
             case EnemyState.Curious:
-                // state = EnemyState.Alert;
-                // questionMark.SetActive(false);
-                // exclamationMark.SetActive(true);
+                state = EnemyState.Alert;
+                questionMark.SetActive(false);
+                exclamationMark.SetActive(true);
                 break;
         }
         directionOfSound = posOfSound - (Vector2)transform.position;
