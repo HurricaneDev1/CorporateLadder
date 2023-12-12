@@ -209,7 +209,7 @@ public class MoveLoser : MonoBehaviour
             
             
             
-        } else if(!context.action.ReadValue<bool>()){
+        } else if(context.action.ReadValue<float>() == 0f){
             throwing = false;
             GameObject clone = Instantiate(projectile, throwPosition);
             if(sr.flipX){
